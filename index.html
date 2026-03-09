@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PetMatch – Find Your Perfect Pet</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============ RESET & BASE ============ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #FDF8F2;
+    color: #2C1810;
+    overflow-x: hidden;
+  }
+
+  /* ============ CSS VARIABLES ============ */
+  :root {
+    --cream: #FDF8F2;
+    --warm-white: #FAF5ED;
+    --tan: #E8D5B7;
+    --amber: #D4922A;
+    --amber-light: #F0B655;
+    --terracotta: #C4623A;
+    --sage: #6B8F71;
+    --sage-light: #A8C5AC;
+    --deep-brown: #2C1810;
+    --mid-brown: #6B3D2E;
+    --light-brown: #A0623A;
+    --text-muted: #7A5C4A;
+    --shadow-sm: 0 2px 12px rgba(44,24,16,0.08);
+    --shadow-md: 0 8px 32px rgba(44,24,16,0.12);
+    --shadow-lg: 0 20px 60px rgba(44,24,16,0.16);
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
+
+  /* ============ TYPOGRAPHY ============ */
+  h1, h2, h3 { font-family: 'Playfair Display', serif; line-height: 1.15; }
+  h1 { font-size: clamp(2.4rem, 6vw, 4.5rem); font-weight: 900; }
+  h2 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 700; }
+  h3 { font-size: 1.3rem; font-weight: 700; }
+  p { line-height: 1.7; }
+
+  /* ============ SCROLLBAR ============ */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: var(--tan); border-radius: 3px; }
+
+  /* ============ NAVBAR ============ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    background: rgba(253,248,242,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(212,146,42,0.15);
+    padding: 0 2rem;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: var(--shadow-sm); }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--terracotta);
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
+  }
+  .nav-logo span { font-size: 1.6rem; }
+  .nav-links { display: flex; gap: 0.3rem; list-style: none; }
+  .nav-links a {
+    text-decoration: none; color: var(--mid-brown);
+    font-weight: 500; font-size: 0.9rem;
+    padding: 8px 14px; border-radius: 50px;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .nav-links a:hover, .nav-links a.active {
+    background: var(--amber); color: #fff;
+  }
+  .hamburger { display: none; background: none; border: none; cursor: pointer; font-size: 1.5rem; color: var(--mid-brown); }
+  .mobile-menu {
+    display: none; position: fixed; top: 68px; left: 0; right: 0;
+    background: var(--cream); padding: 1rem; z-index: 999;
+    box-shadow: var(--shadow-md); flex-direction: column; gap: 0.5rem;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    text-decoration: none; color: var(--mid-brown); font-weight: 500;
+    padding: 12px 16px; border-radius: var(--radius-sm);
+    transition: background 0.2s;
+  }
+  .mobile-menu a:hover { background: var(--tan); }
+
+  /* ============ SECTION BASE ============ */
+  section { padding: 80px 2rem; }
+  .container { max-width: 1200px; margin: 0 auto; }
+  .section-header { text-align: center; margin-bottom: 3rem; }
+  .section-label {
+    display: inline-block; font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--amber); margin-bottom: 0.6rem;
+  }
+  .section-header p { color: var(--text-muted); max-width: 560px; margin: 0.8rem auto 0; }
+
+  /* ============ BUTTONS ============ */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 50px;
+    font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.95rem;
+    cursor: pointer; border: none; text-decoration: none;
+    transition: all 0.25s; letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: var(--terracotta); color: #fff;
+    box-shadow: 0 4px 20px rgba(196,98,58,0.35);
+  }
+  .btn-primary:hover {
+    background: var(--mid-brown); transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(196,98,58,0.4);
+  }
+  .btn-secondary {
+    background: transparent; color: var(--terracotta);
+    border: 2px solid var(--terracotta);
+  }
+  .btn-secondary:hover {
+    background: var(--terracotta); color: #fff; transform: translateY(-2px);
+  }
+  .btn-sage {
+    background: var(--sage); color: #fff;
+    box-shadow: 0 4px 16px rgba(107,143,113,0.3);
+  }
+  .btn-sage:hover { background: #527857; transform: translateY(-2px); }
+  .btn-amber {
+    background: var(--amber); color: #fff;
+    box-shadow: 0 4px 16px rgba(212,146,42,0.3);
+  }
+  .btn-amber:hover { background: #b8791e; transform: translateY(-2px); }
+  .btn-sm { padding: 9px 18px; font-size: 0.85rem; }
+
+  /* ============ HERO ============ */
+  #home {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 68px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #FDF8F2 0%, #F5E6CC 40%, #EDD5A8 100%);
+  }
+  .hero-blob {
+    position: absolute;
+    border-radius: 50%; opacity: 0.18; filter: blur(60px);
+    animation: float 8s ease-in-out infinite;
+  }
+  .blob1 { width: 500px; height: 500px; background: var(--terracotta); top: -100px; right: -100px; animation-delay: 0s; }
+  .blob2 { width: 350px; height: 350px; background: var(--sage); bottom: 0; left: -80px; animation-delay: -3s; }
+  .blob3 { width: 250px; height: 250px; background: var(--amber); top: 40%; right: 20%; animation-delay: -5s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center;
+    width: 100%;
+  }
+  .hero-text { animation: fadeUp 0.8s ease both; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(212,146,42,0.12); border: 1px solid rgba(212,146,42,0.3);
+    color: var(--amber); padding: 6px 16px; border-radius: 50px;
+    font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 1.2rem;
+  }
+  .hero-title { color: var(--deep-brown); margin-bottom: 1.2rem; }
+  .hero-title .accent { color: var(--terracotta); display: block; }
+  .hero-desc {
+    color: var(--text-muted); font-size: 1.1rem;
+    max-width: 460px; margin-bottom: 2.2rem; line-height: 1.8;
+  }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .hero-stats {
+    display: flex; gap: 2rem; margin-top: 2.5rem;
+    padding-top: 2rem; border-top: 1px solid rgba(44,24,16,0.1);
+  }
+  .stat-item { }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 900; color: var(--terracotta);
+  }
+  .stat-label { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; }
+
+  .hero-visual { animation: fadeUp 0.8s 0.2s ease both; display: flex; justify-content: center; }
+  .hero-card-stack { position: relative; width: 340px; height: 400px; }
+  .hero-pet-card {
+    position: absolute; width: 240px;
+    background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); overflow: hidden;
+    animation: cardFloat 6s ease-in-out infinite;
+  }
+  .hero-pet-card:nth-child(1) { top: 0; left: 0; animation-delay: 0s; transform: rotate(-5deg); }
+  .hero-pet-card:nth-child(2) { top: 60px; right: 0; animation-delay: -2s; transform: rotate(4deg); }
+  .hero-pet-card:nth-child(3) { bottom: 0; left: 40px; animation-delay: -4s; transform: rotate(1deg); }
+  @keyframes cardFloat {
+    0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+    50% { transform: translateY(-12px) rotate(var(--rot, 0deg)); }
+  }
+  .hero-pet-card .pet-emoji {
+    width: 100%; height: 130px; display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+  }
+  .hero-pet-card .pet-info { padding: 12px 14px; }
+  .hero-pet-card .pet-info h4 { font-size: 0.95rem; font-weight: 700; color: var(--deep-brown); }
+  .hero-pet-card .pet-info p { font-size: 0.78rem; color: var(--text-muted); }
+  .card-bg-1 { background: linear-gradient(135deg,#FDEBD0,#FAD7A0); }
+  .card-bg-2 { background: linear-gradient(135deg,#D5ECD8,#A8C5AC); }
+  .card-bg-3 { background: linear-gradient(135deg,#D6EAF8,#AED6F1); }
+
+  /* ============ QUIZ ============ */
+  #quiz { background: var(--warm-white); }
+  .quiz-container {
+    max-width: 700px; margin: 0 auto;
+    background: #fff; border-radius: 28px;
+    box-shadow: var(--shadow-lg);
+    padding: 3rem; position: relative; overflow: hidden;
+  }
+  .quiz-container::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+    background: linear-gradient(90deg, var(--terracotta), var(--amber), var(--sage));
+  }
+  .quiz-progress { margin-bottom: 2rem; }
+  .progress-bar {
+    height: 6px; background: var(--tan); border-radius: 3px; overflow: hidden;
+    margin-top: 0.5rem;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--terracotta), var(--amber));
+    border-radius: 3px; transition: width 0.5s ease;
+  }
+  .progress-text { font-size: 0.82rem; color: var(--text-muted); font-weight: 500; }
+  .quiz-question { margin-bottom: 2rem; }
+  .quiz-question h3 { font-size: 1.4rem; color: var(--deep-brown); margin-bottom: 0.4rem; }
+  .quiz-question p { color: var(--text-muted); font-size: 0.9rem; }
+  .quiz-options { display: grid; gap: 0.75rem; margin-top: 1.5rem; }
+  .quiz-option {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 14px 18px; border-radius: var(--radius-sm);
+    border: 2px solid var(--tan); cursor: pointer;
+    transition: all 0.2s; background: #fff;
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    color: var(--deep-brown); font-weight: 500; text-align: left;
+  }
+  .quiz-option:hover { border-color: var(--amber); background: #FFFBF5; transform: translateX(4px); }
+  .quiz-option.selected { border-color: var(--terracotta); background: #FEF0E8; }
+  .quiz-option .opt-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .quiz-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; }
+  .quiz-step-dots { display: flex; gap: 6px; }
+  .step-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--tan); transition: all 0.3s;
+  }
+  .step-dot.active { background: var(--terracotta); width: 24px; border-radius: 4px; }
+  .step-dot.done { background: var(--sage); }
+
+  /* Result */
+  .quiz-result { display: none; text-align: center; }
+  .quiz-result.show { display: block; }
+  .result-emoji { font-size: 5rem; margin-bottom: 1rem; animation: pop 0.5s ease; }
+  @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.2); } 100% { transform: scale(1); } }
+  .result-title { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--deep-brown); }
+  .result-badge {
+    display: inline-block; background: var(--sage); color: #fff;
+    padding: 6px 20px; border-radius: 50px; font-size: 0.9rem; font-weight: 600;
+    margin-bottom: 1.2rem;
+  }
+  .result-desc { color: var(--text-muted); margin-bottom: 2rem; line-height: 1.8; }
+  .result-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* ============ PETS SECTION ============ */
+  #pets { background: var(--cream); }
+  .pets-controls {
+    display: flex; gap: 1rem; margin-bottom: 2.5rem;
+    flex-wrap: wrap; align-items: center; justify-content: space-between;
+  }
+  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .filter-tab {
+    padding: 8px 18px; border-radius: 50px; font-size: 0.85rem; font-weight: 600;
+    border: 2px solid var(--tan); background: #fff; cursor: pointer;
+    transition: all 0.2s; color: var(--mid-brown);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .filter-tab:hover { border-color: var(--amber); }
+  .filter-tab.active { background: var(--terracotta); border-color: var(--terracotta); color: #fff; }
+  .search-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border: 2px solid var(--tan);
+    border-radius: 50px; padding: 8px 16px;
+    transition: border-color 0.2s;
+  }
+  .search-bar:focus-within { border-color: var(--amber); }
+  .search-bar input {
+    border: none; background: none; outline: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; color: var(--deep-brown);
+    width: 200px;
+  }
+  .search-bar input::placeholder { color: var(--text-muted); }
+  .search-icon { color: var(--text-muted); font-size: 1rem; }
+
+  .pets-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .pet-card {
+    background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow-sm); overflow: hidden;
+    transition: all 0.3s; cursor: pointer;
+    animation: fadeUp 0.4s ease both;
+  }
+  .pet-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .pet-card-img {
+    width: 100%; height: 180px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4.5rem; position: relative; overflow: hidden;
+  }
+  .pet-card-badge {
+    position: absolute; top: 12px; right: 12px;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(8px);
+    padding: 4px 12px; border-radius: 50px;
+    font-size: 0.75rem; font-weight: 700; color: var(--terracotta);
+  }
+  .pet-card-body { padding: 1.2rem; }
+  .pet-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
+  .pet-card-name { font-size: 1.15rem; font-weight: 700; color: var(--deep-brown); }
+  .pet-card-price { font-weight: 700; color: var(--amber); font-size: 1rem; }
+  .pet-card-breed { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.6rem; }
+  .pet-card-traits { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .trait-chip {
+    padding: 3px 10px; border-radius: 50px; font-size: 0.72rem; font-weight: 600;
+    background: var(--warm-white); color: var(--mid-brown);
+  }
+  .pet-card-shop { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 5px; }
+  .pet-card-footer { display: flex; gap: 0.5rem; }
+
+  /* Pet Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 2000;
+    background: rgba(44,24,16,0.5); backdrop-filter: blur(8px);
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .modal {
+    background: #fff; border-radius: 28px;
+    box-shadow: var(--shadow-lg); max-width: 520px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .modal-header {
+    padding: 2rem 2rem 1rem;
+    display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .modal-close {
+    background: var(--warm-white); border: none; width: 36px; height: 36px;
+    border-radius: 50%; cursor: pointer; font-size: 1.1rem; color: var(--mid-brown);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s; flex-shrink: 0;
+  }
+  .modal-close:hover { background: var(--tan); }
+  .modal-pet-emoji { font-size: 5rem; text-align: center; padding: 1.5rem; background: var(--warm-white); }
+  .modal-body { padding: 1rem 2rem 2rem; }
+  .modal-detail-row { display: flex; gap: 1rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .modal-detail {
+    flex: 1; min-width: 120px;
+    background: var(--warm-white); border-radius: var(--radius-sm);
+    padding: 10px 14px;
+  }
+  .modal-detail-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .modal-detail-value { font-weight: 700; color: var(--deep-brown); font-size: 0.95rem; margin-top: 2px; }
+
+  /* ============ SHOPS ============ */
+  #shops { background: var(--warm-white); }
+  .shops-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .shop-card {
+    background: #fff; border-radius: var(--radius);
+    padding: 1.5rem; box-shadow: var(--shadow-sm);
+    transition: all 0.3s; border: 2px solid transparent;
+  }
+  .shop-card:hover { border-color: var(--amber); transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .shop-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+  .shop-icon {
+    width: 52px; height: 52px; border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--amber-light), var(--terracotta));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; flex-shrink: 0;
+  }
+  .shop-name { font-size: 1.05rem; font-weight: 700; color: var(--deep-brown); }
+  .shop-rating { font-size: 0.8rem; color: var(--amber); font-weight: 600; }
+  .shop-info { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.2rem; }
+  .shop-info-row { display: flex; align-items: flex-start; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
+  .shop-info-icon { flex-shrink: 0; margin-top: 1px; }
+  .shop-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+  .shop-tag {
+    padding: 3px 10px; background: #EBF5EC; color: var(--sage);
+    border-radius: 50px; font-size: 0.72rem; font-weight: 600;
+  }
+
+  /* ============ CARE TIPS ============ */
+  #tips { background: var(--cream); }
+  .tips-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  .tip-card {
+    background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow-sm); overflow: hidden;
+    transition: all 0.3s;
+  }
+  .tip-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+  .tip-card-header {
+    padding: 1.5rem; display: flex; align-items: center; gap: 1rem; cursor: pointer;
+    user-select: none;
+  }
+  .tip-emoji { font-size: 2.2rem; }
+  .tip-title { font-size: 1.05rem; font-weight: 700; color: var(--deep-brown); flex: 1; }
+  .tip-chevron { color: var(--text-muted); transition: transform 0.3s; font-size: 1rem; }
+  .tip-card.open .tip-chevron { transform: rotate(180deg); }
+  .tip-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .tip-card.open .tip-body { max-height: 500px; }
+  .tip-content { padding: 0 1.5rem 1.5rem; }
+  .tip-section { margin-bottom: 1rem; }
+  .tip-section h4 {
+    font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--amber); font-weight: 700; margin-bottom: 0.4rem;
+  }
+  .tip-section p { font-size: 0.88rem; color: var(--text-muted); line-height: 1.7; }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--deep-brown); color: rgba(255,255,255,0.7);
+    padding: 3rem 2rem; text-align: center;
+  }
+  .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem; }
+  .footer-tagline { font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .footer-socials { display: flex; gap: 1rem; justify-content: center; margin-bottom: 1.5rem; }
+  .social-btn {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; cursor: pointer; transition: all 0.2s; text-decoration: none; color: #fff;
+  }
+  .social-btn:hover { background: var(--amber); transform: translateY(-3px); }
+  .footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 1.5rem auto; max-width: 400px; }
+  .footer-copy { font-size: 0.8rem; opacity: 0.5; }
+
+  /* ============ BACK TO TOP ============ */
+  #back-to-top {
+    position: fixed; bottom: 2rem; right: 2rem; z-index: 900;
+    width: 48px; height: 48px; border-radius: 50%;
+    background: var(--terracotta); color: #fff; border: none;
+    cursor: pointer; font-size: 1.2rem;
+    box-shadow: var(--shadow-md);
+    display: none; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  #back-to-top.visible { display: flex; animation: fadeIn 0.3s ease; }
+  #back-to-top:hover { background: var(--mid-brown); transform: translateY(-4px); }
+
+  /* ============ ANIMATIONS ============ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+    .hero-content { grid-template-columns: 1fr; text-align: center; gap: 3rem; }
+    .hero-desc { max-width: 100%; }
+    .hero-actions { justify-content: center; }
+    .hero-stats { justify-content: center; gap: 1.5rem; }
+    .hero-visual { display: none; }
+    section { padding: 60px 1.2rem; }
+    .quiz-container { padding: 1.8rem; }
+    .pets-controls { flex-direction: column; align-items: stretch; }
+    .search-bar input { width: 100%; }
+    .search-bar { flex: 1; }
+    .modal-body { padding: 1rem 1.2rem 1.5rem; }
+    .modal-header { padding: 1.5rem 1.2rem 0.8rem; }
+  }
+
+  /* ============ NO-RESULTS ============ */
+  .no-results {
+    grid-column: 1/-1; text-align: center; padding: 3rem;
+    color: var(--text-muted);
+  }
+  .no-results .emoji { font-size: 3rem; margin-bottom: 0.8rem; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a class="nav-logo" href="#home"><span>🐾</span> PetMatch</a>
+  <ul class="nav-links">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#pets">Pets</a></li>
+    <li><a href="#shops">Pet Shops</a></li>
+    <li><a href="#tips">Care Tips</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">☰</button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#home" onclick="closeMenu()">🏠 Home</a>
+  <a href="#quiz" onclick="closeMenu()">📝 Quiz</a>
+  <a href="#pets" onclick="closeMenu()">🐾 Pets</a>
+  <a href="#shops" onclick="closeMenu()">🏪 Pet Shops</a>
+  <a href="#tips" onclick="closeMenu()">💡 Care Tips</a>
+</div>
+
+<!-- HERO -->
+<section id="home">
+  <div class="hero-bg">
+    <div class="hero-blob blob1"></div>
+    <div class="hero-blob blob2"></div>
+    <div class="hero-blob blob3"></div>
+  </div>
+  <div class="hero-content container">
+    <div class="hero-text">
+      <div class="hero-badge">🌟 Your perfect match awaits</div>
+      <h1 class="hero-title">PetMatch –<span class="accent">Find Your Perfect Pet</span></h1>
+      <p class="hero-desc">Not sure which pet is right for you? Answer a few questions about your lifestyle and we'll match you with the ideal companion — then show you available pets at nearby shops.</p>
+
+      <div class="hero-stats">
+        <div class="stat-item"><div class="stat-num">200+</div><div class="stat-label">Pets Available</div></div>
+        <div class="stat-item"><div class="stat-num">24</div><div class="stat-label">Partner Shops</div></div>
+        <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Pet Types</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-stack">
+        <div class="hero-pet-card">
+          <div class="pet-emoji card-bg-1">🐕</div>
+          <div class="pet-info"><h4>Buddy</h4><p>Golden Retriever · 2 yrs</p></div>
+        </div>
+        <div class="hero-pet-card">
+          <div class="pet-emoji card-bg-2">🐱</div>
+          <div class="pet-info"><h4>Luna</h4><p>Persian Cat · 1 yr</p></div>
+        </div>
+        <div class="hero-pet-card">
+          <div class="pet-emoji card-bg-3">🐰</div>
+          <div class="pet-info"><h4>Pepper</h4><p>Holland Lop · 8 mo</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">🧩 Pet Compatibility Quiz</div>
+      <h2>Find Your Ideal Pet</h2>
+      <p>Answer 5 quick questions about your lifestyle and we'll find the perfect furry (or scaly!) friend for you.</p>
+    </div>
+
+    <div class="quiz-container fade-in" id="quizContainer">
+      <!-- Active Questions -->
+      <div id="quizForm">
+        <div class="quiz-progress">
+          <div class="progress-text" id="progressText">Question 1 of 5</div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+        </div>
+        <div class="quiz-question" id="questionContainer"></div>
+        <div class="quiz-nav">
+          <button class="btn btn-secondary btn-sm" id="prevBtn" onclick="prevQuestion()" style="visibility:hidden">← Back</button>
+          <div class="quiz-step-dots" id="stepDots"></div>
+          <button class="btn btn-primary btn-sm" id="nextBtn" onclick="nextQuestion()">Next →</button>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="quiz-result" id="quizResult">
+        <div class="result-emoji" id="resultEmoji">🐾</div>
+        <div class="result-badge" id="resultBadge">Your Match</div>
+        <h2 class="result-title" id="resultTitle">Perfect Pet Found!</h2>
+        <p class="result-desc" id="resultDesc">Loading your result...</p>
+        <div class="result-actions">
+          <button class="btn btn-primary" onclick="viewMatchedPets()">View Matching Pets 🐾</button>
+          <button class="btn btn-secondary" onclick="retakeQuiz()">Retake Quiz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PETS -->
+<section id="pets">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">🐾 Adoptable Pets</div>
+      <h2>Meet Your Future Friend</h2>
+      <p>Browse pets available at our partner shops. Filter by type or search by name and breed.</p>
+    </div>
+
+    <div class="pets-controls fade-in">
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" onclick="filterPets('all')" data-type="all">All Pets</button>
+        <button class="filter-tab" onclick="filterPets('dog')" data-type="dog">🐕 Dogs</button>
+        <button class="filter-tab" onclick="filterPets('cat')" data-type="cat">🐱 Cats</button>
+        <button class="filter-tab" onclick="filterPets('rabbit')" data-type="rabbit">🐰 Rabbits</button>
+        <button class="filter-tab" onclick="filterPets('bird')" data-type="bird">🦜 Birds</button>
+        <button class="filter-tab" onclick="filterPets('fish')" data-type="fish">🐠 Fish</button>
+        <button class="filter-tab" onclick="filterPets('hamster')" data-type="hamster">🐹 Hamsters</button>
+      </div>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search pets..." oninput="searchPets()" />
+      </div>
+    </div>
+
+    <div class="pets-grid" id="petsGrid"></div>
+  </div>
+</section>
+
+<!-- PET MODAL -->
+<div class="modal-overlay" id="petModal" onclick="closeModal(event)">
+  <div class="modal" id="modalContent">
+    <div class="modal-header">
+      <div>
+        <h3 id="modalName">Pet Name</h3>
+        <div style="font-size:0.85rem;color:var(--text-muted)" id="modalBreed">Breed</div>
+      </div>
+      <button class="modal-close" onclick="closePetModal()">✕</button>
+    </div>
+    <div class="modal-pet-emoji" id="modalEmoji">🐾</div>
+    <div class="modal-body">
+      <div class="modal-detail-row">
+        <div class="modal-detail"><div class="modal-detail-label">Age</div><div class="modal-detail-value" id="modalAge">—</div></div>
+        <div class="modal-detail"><div class="modal-detail-label">Price</div><div class="modal-detail-value" id="modalPrice">—</div></div>
+        <div class="modal-detail"><div class="modal-detail-label">Type</div><div class="modal-detail-value" id="modalType">—</div></div>
+      </div>
+      <div style="margin:1rem 0;">
+        <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Personality</div>
+        <div class="pet-card-traits" id="modalTraits"></div>
+      </div>
+      <div style="background:var(--warm-white);border-radius:var(--radius-sm);padding:1rem;margin-bottom:1.2rem;">
+        <div style="font-size:0.78rem;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;">Shop Info</div>
+        <div style="font-weight:700;color:var(--deep-brown);font-size:0.95rem;" id="modalShop">—</div>
+        <div style="font-size:0.82rem;color:var(--text-muted);" id="modalLocation">—</div>
+      </div>
+      <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+        <button class="btn btn-primary" style="flex:1" id="modalContactBtn">📞 Contact Shop</button>
+        <button class="btn btn-sage" style="flex:1" onclick="closePetModal()">← Back to Pets</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHOPS -->
+<section id="shops">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">🏪 Nearby Pet Shops</div>
+      <h2>Find Pets Near You</h2>
+      <p>Discover our partner pet shops in your area. Visit them to meet the pets in person!</p>
+    </div>
+    <div class="shops-grid" id="shopsGrid"></div>
+  </div>
+</section>
+
+<!-- TIPS -->
+<section id="tips">
+  <div class="container">
+    <div class="section-header fade-in">
+      <div class="section-label">💡 Pet Care Tips</div>
+      <h2>Caring for Your Companion</h2>
+      <p>Essential guides for every pet type — from feeding schedules to grooming and exercise needs.</p>
+    </div>
+    <div class="tips-grid" id="tipsGrid"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🐾 PetMatch</div>
+  <div class="footer-tagline">Made with ❤️ for pet lovers everywhere</div>
+  <div class="footer-socials">
+    <a class="social-btn" href="#" title="Instagram">📸</a>
+    <a class="social-btn" href="#" title="Facebook">👍</a>
+    <a class="social-btn" href="#" title="Twitter">🐦</a>
+    <a class="social-btn" href="#" title="YouTube">▶️</a>
+  </div>
+  <hr class="footer-divider" />
+  <div class="footer-copy">© 2024 PetMatch. All rights reserved. · Helping pets find forever homes.</div>
+</footer>
+
+<!-- BACK TO TOP -->
+<button id="back-to-top" onclick="scrollToTop()" title="Back to top">↑</button>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+
+/* ===== DATA ===== */
+const questions = [
+  {
+    id: 1,
+    question: "Where do you live?",
+    hint: "Your living space affects which pets thrive best",
+    options: [
+      { value: "apartment", label: "Apartment or studio", icon: "🏢", scores: { cat:2, fish:3, hamster:3, bird:2, rabbit:1, dog:-1 } },
+      { value: "small_house", label: "Small house with no yard", icon: "🏠", scores: { cat:2, dog:1, rabbit:2, bird:2, fish:2, hamster:2 } },
+      { value: "big_house", label: "House with a yard", icon: "🏡", scores: { dog:3, rabbit:2, cat:1, bird:1, fish:1, hamster:1 } }
+    ]
+  },
+  {
+    id: 2,
+    question: "How active is your lifestyle?",
+    hint: "Some pets need daily exercise, others are quite relaxed",
+    options: [
+      { value: "very_active", label: "Very active — I love outdoor activities", icon: "🏃", scores: { dog:3, rabbit:1, cat:0, bird:0, fish:0, hamster:0 } },
+      { value: "moderate", label: "Moderate — regular walks and light activity", icon: "🚶", scores: { dog:2, cat:1, rabbit:2, bird:1, fish:0, hamster:0 } },
+      { value: "relaxed", label: "Relaxed — I prefer staying indoors", icon: "🛋️", scores: { cat:3, fish:3, hamster:2, bird:2, rabbit:1, dog:0 } }
+    ]
+  },
+  {
+    id: 3,
+    question: "How much free time do you have for a pet?",
+    hint: "Honest answer leads to a happier life for both of you",
+    options: [
+      { value: "lots", label: "Lots — I'm home most of the day", icon: "⏰", scores: { dog:3, cat:2, bird:2, rabbit:2, fish:1, hamster:1 } },
+      { value: "moderate_time", label: "Some — a few hours each evening", icon: "🕐", scores: { cat:3, rabbit:2, bird:1, fish:2, hamster:2, dog:1 } },
+      { value: "little", label: "Little — busy schedule, often away", icon: "💼", scores: { fish:3, hamster:2, cat:2, bird:1, rabbit:0, dog:-1 } }
+    ]
+  },
+  {
+    id: 4,
+    question: "Do you prefer small or large animals?",
+    hint: "Size matters for space, feeding costs and cuddle factor!",
+    options: [
+      { value: "large", label: "Large animals — more to cuddle!", icon: "🐘", scores: { dog:3, rabbit:1, cat:1, bird:0, fish:0, hamster:0 } },
+      { value: "medium", label: "Medium — a nice middle ground", icon: "🐈", scores: { cat:3, rabbit:3, bird:2, dog:1, fish:0, hamster:0 } },
+      { value: "small", label: "Small — compact and easy to handle", icon: "🐭", scores: { hamster:3, fish:3, bird:3, rabbit:2, cat:1, dog:0 } }
+    ]
+  },
+  {
+    id: 5,
+    question: "What kind of interaction do you want?",
+    hint: "This defines your daily relationship with your pet",
+    options: [
+      { value: "high_interact", label: "Highly interactive — plays, cuddles, tricks", icon: "🤗", scores: { dog:3, cat:1, bird:2, rabbit:1, fish:0, hamster:0 } },
+      { value: "medium_interact", label: "Moderate — affectionate but independent", icon: "🙂", scores: { cat:3, rabbit:3, bird:2, dog:1, hamster:1, fish:0 } },
+      { value: "low_interact", label: "Low maintenance — peaceful & calming", icon: "😌", scores: { fish:3, hamster:2, cat:2, bird:1, rabbit:1, dog:0 } }
+    ]
+  },
+  {
+    id: 6,
+    question: "What is your one-time pet purchase budget?",
+    hint: "This covers the cost of buying or adopting the pet itself",
+    options: [
+      { value: "budget_low", label: "Under ₹2,000 — keeping it very affordable", icon: "💵", scores: { fish:3, hamster:3, rabbit:1, bird:1, cat:0, dog:0 } },
+      { value: "budget_mid", label: "₹2,000 – ₹15,000 — reasonable spend", icon: "💰", scores: { rabbit:3, bird:3, cat:2, hamster:1, fish:1, dog:0 } },
+      { value: "budget_high", label: "₹15,000 and above — happy to invest", icon: "💎", scores: { dog:3, cat:3, bird:1, rabbit:1, fish:0, hamster:0 } }
+    ]
+  },
+  {
+    id: 7,
+    question: "What monthly care budget can you commit to?",
+    hint: "Includes food, grooming, vet visits, and supplies",
+    options: [
+      { value: "monthly_low", label: "Under ₹500 — very minimal spending", icon: "🪙", scores: { fish:3, hamster:3, bird:1, rabbit:0, cat:0, dog:0 } },
+      { value: "monthly_mid", label: "₹500 – ₹2,000 — moderate monthly cost", icon: "💳", scores: { cat:3, rabbit:3, bird:2, hamster:1, fish:1, dog:1 } },
+      { value: "monthly_high", label: "₹2,000+ — comfort is worth the cost", icon: "🏦", scores: { dog:3, cat:2, bird:2, rabbit:1, fish:0, hamster:0 } }
+    ]
+  },
+  {
+    id: 8,
+    question: "How do you feel about vet visits and medical costs?",
+    hint: "Some pets need more frequent veterinary care than others",
+    options: [
+      { value: "vet_avoid", label: "I'd prefer minimal vet involvement", icon: "😅", scores: { fish:3, hamster:2, bird:1, rabbit:1, cat:1, dog:0 } },
+      { value: "vet_occasional", label: "Occasional visits are fine — once or twice a year", icon: "🩺", scores: { cat:3, rabbit:2, bird:2, hamster:1, dog:1, fish:1 } },
+      { value: "vet_regular", label: "Happy to do regular checkups and care", icon: "🏥", scores: { dog:3, cat:2, rabbit:2, bird:1, fish:0, hamster:0 } }
+    ]
+  },
+  {
+    id: 9,
+    question: "Do you have other people (kids, elderly) at home?",
+    hint: "Some pets are better suited to certain household dynamics",
+    options: [
+      { value: "kids", label: "Yes — young children in the house", icon: "👶", scores: { dog:3, cat:2, fish:2, rabbit:1, hamster:0, bird:0 } },
+      { value: "elderly", label: "Yes — elderly family members", icon: "👴", scores: { cat:3, fish:3, bird:2, rabbit:2, hamster:1, dog:1 } },
+      { value: "adults_only", label: "Only adults — just me or a partner", icon: "👫", scores: { dog:2, cat:2, bird:3, rabbit:3, hamster:2, fish:2 } }
+    ]
+  },
+  {
+    id: 10,
+    question: "Do you have allergies or sensitivity concerns?",
+    hint: "Pet fur and dander can trigger allergies in some people",
+    options: [
+      { value: "allergic", label: "Yes — I or someone at home has pet allergies", icon: "🤧", scores: { fish:3, bird:2, hamster:1, rabbit:0, cat:-1, dog:-1 } },
+      { value: "mild", label: "Mild sensitivity — hypoallergenic breeds preferred", icon: "😮‍💨", scores: { fish:2, bird:2, cat:1, hamster:1, rabbit:1, dog:1 } },
+      { value: "none", label: "No allergies — all pets are welcome!", icon: "😊", scores: { dog:2, cat:2, rabbit:2, bird:2, fish:1, hamster:1 } }
+    ]
+  }
+];
+
+const petResults = {
+  dog: {
+    emoji: "🐕", label: "Dog",
+    title: "You're a Dog Person!",
+    desc: "You're active, social, and love deep companionship — a dog fits your lifestyle perfectly! Dogs thrive with engaged owners who have space and time to play, train, and go on adventures together.",
+    color: "#FDEBD0"
+  },
+  cat: {
+    emoji: "🐱", label: "Cat",
+    title: "You're a Cat Person!",
+    desc: "You appreciate independence and quiet companionship. Cats are perfect for your balanced lifestyle — affectionate on their own terms, easy to care for, and great for both apartments and houses.",
+    color: "#D5ECD8"
+  },
+  rabbit: {
+    emoji: "🐰", label: "Rabbit",
+    title: "A Rabbit is Your Match!",
+    desc: "You love gentle, interactive pets without the high demands of a dog. Rabbits are social, surprisingly playful, and flourish with a caring owner who gives them some outdoor time and plenty of love.",
+    color: "#F5D5D5"
+  },
+  bird: {
+    emoji: "🦜", label: "Bird",
+    title: "A Bird is Perfect for You!",
+    desc: "You enjoy liveliness and charm without needing a large animal. Birds bring color, song, and personality to any home — and many species form deep bonds with their owners.",
+    color: "#D6EAF8"
+  },
+  fish: {
+    emoji: "🐠", label: "Fish",
+    title: "Fish Are Your Ideal Pet!",
+    desc: "You prefer a peaceful, low-maintenance companion that creates a calming atmosphere. A beautiful aquarium fits your busy or relaxed lifestyle perfectly — therapeutic and stunning.",
+    color: "#D1ECF1"
+  },
+  hamster: {
+    emoji: "🐹", label: "Hamster",
+    title: "A Hamster Suits You Best!",
+    desc: "You want a small, easy-to-care-for companion that's still fun to watch and hold. Hamsters are great for smaller spaces and busier schedules — curious, adorable little creatures!",
+    color: "#FDEBD0"
+  }
+};
+
+const petsData = [
+  // Dogs
+  { id:1, type:"dog", emoji:"🐕", name:"Buddy", breed:"Golden Retriever", age:"2 years", traits:["Playful","Loyal","Friendly"], price:"₹25,000", shop:"Pawsome Pets", location:"Anna Nagar, Chennai", phone:"044-2345-6789" },
+  { id:2, type:"dog", emoji:"🐶", name:"Max", breed:"Labrador", age:"1.5 years", traits:["Energetic","Gentle","Smart"], price:"₹18,000", shop:"Happy Paws Store", location:"T. Nagar, Chennai", phone:"044-8765-4321" },
+  { id:3, type:"dog", emoji:"🐩", name:"Coco", breed:"Poodle", age:"8 months", traits:["Elegant","Smart","Hypoallergenic"], price:"₹30,000", shop:"Elite Pets", location:"Adyar, Chennai", phone:"044-5555-1234" },
+  { id:4, type:"dog", emoji:"🐕‍🦺", name:"Rocky", breed:"German Shepherd", age:"3 years", traits:["Protective","Brave","Obedient"], price:"₹22,000", shop:"Pawsome Pets", location:"Anna Nagar, Chennai", phone:"044-2345-6789" },
+  // Cats
+  { id:5, type:"cat", emoji:"🐱", name:"Luna", breed:"Persian", age:"1 year", traits:["Calm","Fluffy","Affectionate"], price:"₹12,000", shop:"Kitty Corner", location:"Velachery, Chennai", phone:"044-9999-1111" },
+  { id:6, type:"cat", emoji:"🐈", name:"Mochi", breed:"British Shorthair", age:"6 months", traits:["Playful","Independent","Quiet"], price:"₹15,000", shop:"Happy Paws Store", location:"T. Nagar, Chennai", phone:"044-8765-4321" },
+  { id:7, type:"cat", emoji:"🐈‍⬛", name:"Shadow", breed:"Maine Coon", age:"2 years", traits:["Majestic","Gentle","Intelligent"], price:"₹20,000", shop:"Elite Pets", location:"Adyar, Chennai", phone:"044-5555-1234" },
+  // Rabbits
+  { id:8, type:"rabbit", emoji:"🐰", name:"Pepper", breed:"Holland Lop", age:"8 months", traits:["Curious","Soft","Cuddly"], price:"₹3,500", shop:"Bunny World", location:"Mylapore, Chennai", phone:"044-3333-7777" },
+  { id:9, type:"rabbit", emoji:"🐇", name:"Snowball", breed:"Angora", age:"1 year", traits:["Fluffy","Gentle","Quiet"], price:"₹4,200", shop:"Happy Paws Store", location:"T. Nagar, Chennai", phone:"044-8765-4321" },
+  // Birds
+  { id:10, type:"bird", emoji:"🦜", name:"Kiki", breed:"Green Cheek Conure", age:"1 year", traits:["Talkative","Playful","Colorful"], price:"₹8,000", shop:"Feathered Friends", location:"Porur, Chennai", phone:"044-6666-2222" },
+  { id:11, type:"bird", emoji:"🐦", name:"Sky", breed:"Cockatiel", age:"6 months", traits:["Melodic","Friendly","Smart"], price:"₹4,500", shop:"Feathered Friends", location:"Porur, Chennai", phone:"044-6666-2222" },
+  { id:12, type:"bird", emoji:"🦚", name:"Pearl", breed:"Indian Ringneck", age:"2 years", traits:["Talkative","Vibrant","Clever"], price:"₹6,000", shop:"Elite Pets", location:"Adyar, Chennai", phone:"044-5555-1234" },
+  // Fish
+  { id:13, type:"fish", emoji:"🐠", name:"Nemo", breed:"Clownfish", age:"4 months", traits:["Colorful","Peaceful","Low-maint."], price:"₹500", shop:"Aqua World", location:"Chromepet, Chennai", phone:"044-7777-3333" },
+  { id:14, type:"fish", emoji:"🐡", name:"Goldie", breed:"Goldfish", age:"6 months", traits:["Classic","Calm","Beautiful"], price:"₹200", shop:"Aqua World", location:"Chromepet, Chennai", phone:"044-7777-3333" },
+  { id:15, type:"fish", emoji:"🦈", name:"Blue", breed:"Betta Fish", age:"3 months", traits:["Vibrant","Solo","Elegant"], price:"₹800", shop:"Fish Palace", location:"Tambaram, Chennai", phone:"044-4444-8888" },
+  // Hamsters
+  { id:16, type:"hamster", emoji:"🐹", name:"Peanut", breed:"Syrian Hamster", age:"3 months", traits:["Tiny","Curious","Nocturnal"], price:"₹600", shop:"Small Paws", location:"Tambaram, Chennai", phone:"044-4444-9999" },
+  { id:17, type:"hamster", emoji:"🐭", name:"Caramel", breed:"Dwarf Hamster", age:"2 months", traits:["Tiny","Fast","Friendly"], price:"₹450", shop:"Small Paws", location:"Tambaram, Chennai", phone:"044-4444-9999" },
+];
+
+const shopsData = [
+  { name:"Pawsome Pets", address:"45 2nd Avenue, Anna Nagar, Chennai 600040", phone:"044-2345-6789", rating:"⭐ 4.8", tags:["Dogs","Cats","Accessories"], emoji:"🐕", mapQuery:"Pawsome+Pets+Anna+Nagar+Chennai" },
+  { name:"Happy Paws Store", address:"12 Usman Road, T. Nagar, Chennai 600017", phone:"044-8765-4321", rating:"⭐ 4.6", tags:["Dogs","Cats","Rabbits"], emoji:"🐾", mapQuery:"Happy+Paws+Store+T+Nagar+Chennai" },
+  { name:"Elite Pets", address:"88 LB Road, Adyar, Chennai 600020", phone:"044-5555-1234", rating:"⭐ 4.9", tags:["Exotic Pets","Birds","Cats"], emoji:"🌟", mapQuery:"Elite+Pets+Adyar+Chennai" },
+  { name:"Kitty Corner", address:"15 Velachery Main Road, Chennai 600042", phone:"044-9999-1111", rating:"⭐ 4.5", tags:["Cats","Grooming","Toys"], emoji:"🐱", mapQuery:"Kitty+Corner+Velachery+Chennai" },
+  { name:"Feathered Friends", address:"23 Mount Poonamallee Rd, Porur, Chennai", phone:"044-6666-2222", rating:"⭐ 4.7", tags:["Birds","Cages","Seeds"], emoji:"🦜", mapQuery:"Feathered+Friends+Porur+Chennai" },
+  { name:"Aqua World", address:"7 GST Road, Chromepet, Chennai 600044", phone:"044-7777-3333", rating:"⭐ 4.4", tags:["Fish","Aquariums","Plants"], emoji:"🐠", mapQuery:"Aqua+World+Chromepet+Chennai" },
+  { name:"Bunny World", address:"31 Mylapore High Road, Chennai 600004", phone:"044-3333-7777", rating:"⭐ 4.6", tags:["Rabbits","Guinea Pigs","Hay"], emoji:"🐰", mapQuery:"Bunny+World+Mylapore+Chennai" },
+  { name:"Small Paws", address:"56 Tambaram Main Road, Chennai 600045", phone:"044-4444-9999", rating:"⭐ 4.3", tags:["Hamsters","Mice","Small Pets"], emoji:"🐹", mapQuery:"Small+Paws+Tambaram+Chennai" },
+];
+
+const careTips = [
+  {
+    type:"dog", emoji:"🐕", title:"Dog Care Guide",
+    sections: [
+      { title:"Feeding", text:"Feed adult dogs twice daily with high-quality kibble appropriate for their size and age. Always provide fresh water. Avoid chocolate, grapes, onions, and processed human food." },
+      { title:"Exercise", text:"Dogs need 30–90 minutes of daily exercise depending on breed. Walks, fetch, and agility games keep them mentally and physically healthy. Puppies need shorter, more frequent play sessions." },
+      { title:"Grooming", text:"Brush regularly based on coat type — daily for long coats, weekly for short coats. Bathe monthly, trim nails every 3–4 weeks, and clean ears regularly to prevent infections." },
+      { title:"General Care", text:"Schedule vet visits twice a year for wellness checks. Keep vaccinations and deworming up to date. Crate training and positive reinforcement from early age leads to a well-behaved companion." }
+    ]
+  },
+  {
+    type:"cat", emoji:"🐱", title:"Cat Care Guide",
+    sections: [
+      { title:"Feeding", text:"Feed cats 2–3 times daily with quality wet or dry food. Cats are obligate carnivores — ensure high protein content. Always keep fresh water available; many cats prefer running water (try a fountain)." },
+      { title:"Exercise", text:"Cats need 15–30 minutes of active play daily. Use wand toys, laser pointers, and interactive feeders. Provide a cat tree or climbing shelves to satisfy their natural instincts." },
+      { title:"Grooming", text:"Short-haired cats need weekly brushing; long-haired cats need daily grooming. Trim claws every 2–3 weeks. Provide a scratching post to maintain nail health naturally." },
+      { title:"General Care", text:"Cats are solitary by nature but need daily interaction. Keep the litter box clean — scoop daily. Annual vet visits are essential. Indoor cats live significantly longer than outdoor cats." }
+    ]
+  },
+  {
+    type:"rabbit", emoji:"🐰", title:"Rabbit Care Guide",
+    sections: [
+      { title:"Feeding", text:"Rabbits need unlimited timothy hay, fresh leafy greens daily, and a small amount of pellets. Hay should make up 80% of their diet. Avoid sugary fruits and starchy vegetables." },
+      { title:"Exercise", text:"Rabbits need at least 3–4 hours of free roaming time daily outside their enclosure. They love to explore, jump, and dig. Rabbit-proof your space by covering wires and removing hazards." },
+      { title:"Grooming", text:"Brush rabbits 2–3 times a week; daily during shedding season. Never bathe a rabbit — they groom themselves like cats. Trim nails every 4–6 weeks." },
+      { title:"General Care", text:"Rabbits are social animals — consider adopting in pairs. They can be litter trained easily. Annual vet check-ups with a rabbit-savvy vet are important. Keep them cool — they're sensitive to heat." }
+    ]
+  },
+  {
+    type:"bird", emoji:"🦜", title:"Bird Care Guide",
+    sections: [
+      { title:"Feeding", text:"Feed birds a varied diet: high-quality pellets (60–70%), fresh fruits, vegetables, and limited seeds. Avoid avocado, onion, caffeine, and chocolate which are toxic to birds." },
+      { title:"Exercise", text:"Birds need several hours of out-of-cage time daily to fly and explore. Provide perches of different textures and sizes. Foraging toys encourage natural behaviors and mental stimulation." },
+      { title:"Grooming", text:"Provide a shallow dish for bathing 2–3 times weekly or mist with water. Trim wing feathers and nails by a vet or experienced groomer. Beak maintenance is usually handled through natural chewing." },
+      { title:"General Care", text:"Birds thrive on routine and social interaction — talk and sing with them daily. Keep the cage in a social area of the home. Cover the cage at night to ensure 10–12 hours of sleep. Vet check-ups annually." }
+    ]
+  },
+  {
+    type:"fish", emoji:"🐠", title:"Fish Care Guide",
+    sections: [
+      { title:"Feeding", text:"Feed most fish small amounts 1–2 times daily — only what they can eat in 2–3 minutes. Overfeeding causes water quality issues. Vary diet with flakes, pellets, and occasional live or frozen food." },
+      { title:"Exercise", text:"Fish exercise naturally by swimming. A larger tank encourages more movement. Add decorations, plants, and hiding spots. Ensure adequate tank size for the species — overcrowding causes stress." },
+      { title:"Grooming", text:"Change 20–30% of tank water weekly. Clean algae from glass with a scraper. Rinse decorations periodically. Monitor filter function and replace media monthly to maintain water quality." },
+      { title:"General Care", text:"Test water parameters (pH, ammonia, nitrite, nitrate) weekly. Cycle your tank before adding fish. Keep water temperature stable and appropriate for the species. Quarantine new fish before adding to the main tank." }
+    ]
+  },
+  {
+    type:"hamster", emoji:"🐹", title:"Hamster Care Guide",
+    sections: [
+      { title:"Feeding", text:"Provide a mix of commercial hamster pellets, fresh vegetables, and occasional fruits. Offer small amounts of protein like mealworms weekly. Fresh water daily via a sipper bottle is essential." },
+      { title:"Exercise", text:"Hamsters need a solid-surface wheel (at least 20cm diameter) to run — they may travel several miles nightly! Provide a large enough cage with tunnels, platforms, and climbing toys." },
+      { title:"Grooming", text:"Hamsters are naturally clean and groom themselves. Never bathe them in water — it stresses them. Provide a sand bath a few times a week for self-cleaning. Keep the cage clean to prevent odor." },
+      { title:"General Care", text:"Most hamsters are nocturnal — respect their sleep schedule. Handle gently from a young age. Clean the cage partially weekly and fully monthly. Syrian hamsters must live alone; dwarf species can live in same-sex pairs." }
+    ]
+  }
+];
+
+/* ===== QUIZ STATE ===== */
+let currentQ = 0;
+let answers = [];
+let scores = { dog:0, cat:0, rabbit:0, bird:0, fish:0, hamster:0 };
+let quizActive = true;
+let currentFilter = 'all';
+let currentSearch = '';
+let suggestedPetType = null;
+
+/* ===== QUIZ LOGIC ===== */
+function renderQuestion() {
+  const q = questions[currentQ];
+  const pct = ((currentQ + 1) / questions.length) * 100;
+  document.getElementById('progressText').textContent = `Question ${currentQ + 1} of ${questions.length}`; // auto-reads length
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const optionsHtml = q.options.map((opt, i) => `
+    <button class="quiz-option ${answers[currentQ] === i ? 'selected' : ''}"
+      onclick="selectOption(${i})" data-idx="${i}">
+      <span class="opt-icon">${opt.icon}</span>
+      <span>${opt.label}</span>
+    </button>
+  `).join('');
+
+  document.getElementById('questionContainer').innerHTML = `
+    <h3>${q.question}</h3>
+    <p>${q.hint}</p>
+    <div class="quiz-options">${optionsHtml}</div>
+  `;
+
+  // Dots
+  const dots = questions.map((_, i) => {
+    let cls = 'step-dot';
+    if (i < currentQ) cls += ' done';
+    else if (i === currentQ) cls += ' active';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+  document.getElementById('stepDots').innerHTML = dots;
+
+  document.getElementById('prevBtn').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  const isLast = currentQ === questions.length - 1;
+  document.getElementById('nextBtn').textContent = isLast ? 'Get My Match 🎉' : 'Next →';
+}
+
+function selectOption(idx) {
+  answers[currentQ] = idx;
+  document.querySelectorAll('.quiz-option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+}
+
+function nextQuestion() {
+  if (answers[currentQ] === undefined) {
+    document.querySelectorAll('.quiz-option')[0].style.animation = 'none';
+    const opts = document.querySelectorAll('.quiz-option');
+    opts.forEach(o => { o.style.borderColor = '#e74c3c'; });
+    setTimeout(() => opts.forEach(o => { o.style.borderColor = ''; }), 1200);
+    return;
+  }
+  // Add scores
+  const opt = questions[currentQ].options[answers[currentQ]];
+  Object.entries(opt.scores).forEach(([pet, sc]) => { scores[pet] += sc; });
+
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    // Undo scores for current question if answered
+    if (answers[currentQ] !== undefined) {
+      const opt = questions[currentQ].options[answers[currentQ]];
+      Object.entries(opt.scores).forEach(([pet, sc]) => { scores[pet] -= sc; });
+    }
+    currentQ--;
+    // Undo scores for question we're going back to
+    if (answers[currentQ] !== undefined) {
+      const opt = questions[currentQ].options[answers[currentQ]];
+      Object.entries(opt.scores).forEach(([pet, sc]) => { scores[pet] -= sc; });
+      answers.splice(currentQ, 1);
+    }
+    renderQuestion();
+  }
+}
+
+function showResult() {
+  const top = Object.entries(scores).sort((a,b) => b[1] - a[1])[0][0];
+  suggestedPetType = top;
+  const result = petResults[top];
+  document.getElementById('resultEmoji').textContent = result.emoji;
+  document.getElementById('resultBadge').textContent = result.label;
+  document.getElementById('resultTitle').textContent = result.title;
+  document.getElementById('resultDesc').textContent = result.desc;
+  document.getElementById('quizForm').style.display = 'none';
+  document.getElementById('quizResult').classList.add('show');
+}
+
+function retakeQuiz() {
+  currentQ = 0;
+  answers = [];
+  scores = { dog:0, cat:0, rabbit:0, bird:0, fish:0, hamster:0 };
+  suggestedPetType = null;
+  document.getElementById('quizResult').classList.remove('show');
+  document.getElementById('quizForm').style.display = 'block';
+  renderQuestion();
+}
+
+function viewMatchedPets() {
+  if (suggestedPetType) {
+    filterPets(suggestedPetType);
+    document.getElementById('pets').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+/* ===== PETS RENDERING ===== */
+function getBgColor(type) {
+  const map = { dog:'linear-gradient(135deg,#FDEBD0,#FAD7A0)', cat:'linear-gradient(135deg,#D5ECD8,#A8C5AC)', rabbit:'linear-gradient(135deg,#F5D5D5,#E8B4B8)', bird:'linear-gradient(135deg,#D6EAF8,#AED6F1)', fish:'linear-gradient(135deg,#D1ECF1,#A3D5DC)', hamster:'linear-gradient(135deg,#FDEBD0,#F0C48A)' };
+  return map[type] || '#eee';
+}
+
+function renderPets(list) {
+  const grid = document.getElementById('petsGrid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="no-results"><div class="emoji">🔍</div><p>No pets found matching your search.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map((pet, i) => `
+    <div class="pet-card" style="animation-delay:${i * 0.06}s" onclick="openPetModal(${pet.id})">
+      <div class="pet-card-img" style="background:${getBgColor(pet.type)}">
+        <span style="font-size:4.5rem">${pet.emoji}</span>
+        <div class="pet-card-badge">${pet.age}</div>
+      </div>
+      <div class="pet-card-body">
+        <div class="pet-card-header">
+          <div class="pet-card-name">${pet.name}</div>
+          <div class="pet-card-price">${pet.price}</div>
+        </div>
+        <div class="pet-card-breed">${pet.breed}</div>
+        <div class="pet-card-traits">
+          ${pet.traits.map(t => `<span class="trait-chip">${t}</span>`).join('')}
+        </div>
+        <div class="pet-card-shop">📍 ${pet.shop} · ${pet.location}</div>
+        <div class="pet-card-footer">
+          <button class="btn btn-primary btn-sm" style="flex:1" onclick="event.stopPropagation();openPetModal(${pet.id})">View Details</button>
+          <button class="btn btn-sage btn-sm" onclick="event.stopPropagation();contactShop('${pet.shop}','${pet.phone}')">📞 Call</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterPets(type) {
+  currentFilter = type;
+  document.querySelectorAll('.filter-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.type === type);
+  });
+  applyFilters();
+}
+
+function searchPets() {
+  currentSearch = document.getElementById('searchInput').value.toLowerCase();
+  applyFilters();
+}
+
+function applyFilters() {
+  let list = petsData;
+  if (currentFilter !== 'all') list = list.filter(p => p.type === currentFilter);
+  if (currentSearch) list = list.filter(p => p.name.toLowerCase().includes(currentSearch) || p.breed.toLowerCase().includes(currentSearch) || p.traits.some(t => t.toLowerCase().includes(currentSearch)));
+  renderPets(list);
+}
+
+function openPetModal(id) {
+  const pet = petsData.find(p => p.id === id);
+  if (!pet) return;
+  document.getElementById('modalName').textContent = pet.name;
+  document.getElementById('modalBreed').textContent = pet.breed;
+  document.getElementById('modalEmoji').textContent = pet.emoji;
+  document.getElementById('modalEmoji').style.background = getBgColor(pet.type);
+  document.getElementById('modalAge').textContent = pet.age;
+  document.getElementById('modalPrice').textContent = pet.price;
+  document.getElementById('modalType').textContent = pet.type.charAt(0).toUpperCase() + pet.type.slice(1);
+  document.getElementById('modalTraits').innerHTML = pet.traits.map(t => `<span class="trait-chip">${t}</span>`).join('');
+  document.getElementById('modalShop').textContent = pet.shop;
+  document.getElementById('modalLocation').textContent = '📍 ' + pet.location;
+  document.getElementById('modalContactBtn').onclick = () => contactShop(pet.shop, pet.phone);
+  document.getElementById('petModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePetModal() {
+  document.getElementById('petModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('petModal')) closePetModal();
+}
+
+function contactShop(name, phone) {
+  alert(`📞 Contact ${name}\n\nPhone: ${phone}\n\nPlease call during business hours (9 AM – 7 PM)`);
+}
+
+/* ===== SHOPS RENDERING ===== */
+function renderShops() {
+  const grid = document.getElementById('shopsGrid');
+  grid.innerHTML = shopsData.map((shop, i) => `
+    <div class="shop-card fade-in" style="animation-delay:${i * 0.08}s">
+      <div class="shop-header">
+        <div class="shop-icon">${shop.emoji}</div>
+        <div>
+          <div class="shop-name">${shop.name}</div>
+          <div class="shop-rating">${shop.rating}</div>
+        </div>
+      </div>
+      <div class="shop-info">
+        <div class="shop-info-row"><span class="shop-info-icon">📍</span><span>${shop.address}</span></div>
+        <div class="shop-info-row"><span class="shop-info-icon">📞</span><span>${shop.phone}</span></div>
+      </div>
+      <div class="shop-tags">${shop.tags.map(t => `<span class="shop-tag">${t}</span>`).join('')}</div>
+      <a href="https://www.google.com/maps/search/?api=1&query=${shop.mapQuery}" target="_blank" class="btn btn-amber btn-sm" style="width:100%;justify-content:center">🗺️ Open in Google Maps</a>
+    </div>
+  `).join('');
+}
+
+/* ===== TIPS RENDERING ===== */
+function renderTips() {
+  const grid = document.getElementById('tipsGrid');
+  grid.innerHTML = careTips.map((tip, i) => `
+    <div class="tip-card fade-in" style="animation-delay:${i * 0.08}s" id="tipCard${i}">
+      <div class="tip-card-header" onclick="toggleTip(${i})">
+        <span class="tip-emoji">${tip.emoji}</span>
+        <span class="tip-title">${tip.title}</span>
+        <span class="tip-chevron">▼</span>
+      </div>
+      <div class="tip-body">
+        <div class="tip-content">
+          ${tip.sections.map(s => `
+            <div class="tip-section">
+              <h4>${s.title}</h4>
+              <p>${s.text}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleTip(i) {
+  const card = document.getElementById('tipCard' + i);
+  card.classList.toggle('open');
+}
+
+/* ===== NAV ===== */
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+function closeMenu() {
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+/* ===== SCROLL EFFECTS ===== */
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+
+  const btn = document.getElementById('back-to-top');
+  btn.classList.toggle('visible', window.scrollY > 400);
+
+  // Fade in
+  document.querySelectorAll('.fade-in').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight - 80) el.classList.add('visible');
+  });
+
+  // Active nav link
+  const sections = ['home','quiz','pets','shops','tips'];
+  let current = 'home';
+  sections.forEach(id => {
+    const sec = document.getElementById(id);
+    if (sec && sec.getBoundingClientRect().top <= 100) current = id;
+  });
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ===== INIT ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  renderQuestion();
+  renderPets(petsData);
+  renderShops();
+  renderTips();
+  // Trigger fade for above-fold
+  setTimeout(() => {
+    document.querySelectorAll('.fade-in').forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight) el.classList.add('visible');
+    });
+  }, 100);
+});
+</script>
+</body>
+</html>
