@@ -1,4 +1,4 @@
-**# PetMatch 🐾
+# PetMatch 🐾
 
 PetMatch is a web application that helps users find and connect with pets available for adoption. The platform allows users to browse pets, view details, and discover their ideal companion based on preferences.
 
@@ -22,4 +22,4 @@ PetMatch is a web application that helps users find and connect with pets availa
 1. Clone the repository
 
 ```bash
-git clone https://github.com/alvina-delcia/PetMatch.git**
+git clone https://github.com/alvina-delcia/PetMatch.git
